@@ -24,7 +24,6 @@ export default defineConfig({
         ? undefined
         : {},
     }),
-    UnoCSS(),
     svelte(),
   ],
 })

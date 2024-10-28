@@ -1,4 +1,7 @@
 <script lang="ts">
+  import { tick } from "svelte";
+
+
   let {
     columns=$bindable(),
     items,
@@ -8,7 +11,7 @@
     columns: { label: string; field: keyof any }[];
   } = $props();
   let widths: number[] = $state([]);
-  let dragging: {index:number,offset:number} |null= $state(null)
+  let dragging: {action:"move"|"resize", index:number,offset:number} |null= $state(null)
 //   let offsets:number[] = $state([])
 //   $effect(() => {
 //     offsets = columns.map(() => 0);
@@ -39,22 +42,30 @@ function getOffset(index:number){
     return 0
     
 }
+function getWidth(index:number){
+  return widths[index]==undefined&&120||widths[index]
+}
 </script>
 
 <svelte:window />
 <svelte:document class="{dragging?"!cursor-grabbing":""}"/>
 <div>{dragging?.offset}&nbsp;</div>
-<div class="flex flex-col w-max ">
-  <div class="flex flex-row">
+<div class="file-system-table" style="grid-template-columns: {columns.map((_,i)=>`minmax(4em,${getWidth(i)}px)`).join(' ')};">
+  <div class="header-bar">
     {#each columns as column, i (column)}
-      <div
+      <button
         bind:offsetWidth={widths[i]}
-        style="width: {widths[i]||120}px; left: {getOffset(i)}px;"
-        class="relative flex flex-row border-x  transition-left transition-delay-0 {dragging?.index==i?'transition-duration-none':'transition-duration-400'} "
+        style=" left: {getOffset(i)}px;"
+        data-dragging={dragging?.index==i}
+        class="header-cell"
+        title={column.label}
       >
-        <button 
+        <div 
+        role="button"
+        tabindex="-1"
         onmousedown={()=>{
-            dragging={index:i,offset:0}
+          if(dragging){return}
+            dragging={index:i,offset:0,action:"move"}
             const mousemove:Window['onmousemove']=(e) => {
                 if(!dragging){return}
                 dragging!.offset+=e.movementX
@@ -85,39 +96,110 @@ function getOffset(index:number){
             window.addEventListener("mousemove", mousemove);
             window.addEventListener("mouseup",mouseup,{once:true})
         }}
-        class="flex-grow px-2 truncate">{column.label}</button>
-        <button
-          onmousedown={() => {
-            const mousemove:Window['onmousemove']=(e) => {
+        class="label">{column.label}</div>
+        <div
+          class="drag-area "
+        role="button"
+        tabindex="-1"
+          onmousedown={(e) => {
+            if(dragging){return}
+            dragging = {action:"resize",index:i,offset:0}
+            e.preventDefault()
+            const mousemove:Window['onmousemove']=async (e) => {
                 widths[i] = Math.max(0,widths[i]+e.movementX) 
+                console.log(i,e.movementX)
             }
             const mouseup:Window['onmouseup'] = ()=>{
                 window.removeEventListener("mousemove",mousemove)
+                dragging=null
             }
             window.addEventListener("mousemove", mousemove);
             window.addEventListener("mouseup",mouseup,{once:true})
           }}
-          class="border border-none w-2 float-end absolute -right-1 h-full hover:bg-red/0 z-50 cursor-col-resize {dragging?"pointer-events-none":""}"
           aria-label="drag"
-        ></button>
-      </div>
+        ></div>
+      </button>
     {/each}
   </div>
   {#each items as item}
-    <div class="flex flex-row w-inherit">
-      {#each columns as column, i}
-        <div style="width: {widths[i]}px;" class="border-x border-transparent px-2 truncate">
+    <div class="content-row">
+      {#each columns as column}
+        <div class="content-cell">
           {item[column.field]}
         </div>
       {/each}
     </div>
   {/each}
 </div>
-
-<style lang="ts">
-  :root {
-    --bg: rgb(25 25 25);
-    --bg-hover: rgb(61, 61, 61);
-    --border: rgb(202, 202, 202);
+<style lang='postcss'>
+  .content-row{
+    display: contents;
   }
+  .content-cell{
+    width: 100%;
+    display: inline-block;
+    border-inline-end: thin solid transparent;
+  }
+  .file-system-table{
+    user-select: none;
+    display: grid;
+    width: max-content;
+
+  }
+  .header-bar{
+    display: contents;
+  }
+  .header-cell{
+    width: 100%;
+    min-width: 3em;
+    cursor: default;
+    appearance: none;
+    border: none;
+    position: relative;
+    transition: left 400ms 0ms;
+    
+    &[data-dragging=true]{
+      transition-duration: 0ms;
+      z-index: 50;
+      background-color: var(--c-bg-3);
+    }
+  }
+  .label{
+      display: inline-block;
+      width: 100%;
+      height: 100%;
+      position: relative;
+      [data-dragging=false]>&{
+        border-inline-end: thin solid;
+        border-color: inherit;
+      }
+    }
+  .label,.content-cell{
+    
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .drag-area{
+    position: absolute;
+    float: inline-end;
+    top: 0;
+    right: -0.5em;
+    height: 100%;
+    width: 1.0em;
+    /* right: 0.5em; */
+    z-index: 10;
+    [data-debug=true] &{
+      background-color: rgba(255, 0, 0, 0.541) ;
+    } 
+
+    &:hover{
+      cursor: col-resize;
+    }
+    .header-cell[data-dragging=true]>&{
+      z-index: 50;
+    }
+
+  }
+
 </style>

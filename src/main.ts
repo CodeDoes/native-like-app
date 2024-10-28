@@ -1,7 +1,7 @@
-import '@unocss/reset/tailwind.css'
+// import '@unocss/reset/tailwind.css'
 import '@unocss/reset/normalize.css'
-import 'virtual:uno.css'
 // import './style.css'
+// import 'virtual:uno.css'
 
 import { mount } from "svelte"
 import App from "./App.svelte"
