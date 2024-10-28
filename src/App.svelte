@@ -2,6 +2,7 @@
   import FileSystemTable, {
     type FileSystemTableColumn,
   } from "./file-system-table/FileSystemTable.svelte";
+  import LocationBar from "./location-bar/LocationBar.svelte";
   import sample_data from "./sample-data.json";
   let columns: FileSystemTableColumn[] = $state([]);
   $effect(() => {
@@ -17,8 +18,10 @@
     }));
   });
   const items: any[] = $derived(sample_data);
+  let location = $state("D:\\Music\\Classic\\Beethoven");
 </script>
 
+<LocationBar bind:location />
 <FileSystemTable bind:columns {items} />
 
 <style lang="postcss">
@@ -27,7 +30,7 @@
       --c-bg-1: rgb(17, 17, 17);
       --c-bg-2: rgb(39, 39, 39);
       --c-bg-3: rgb(56, 56, 56);
-      --c-border: rgb(66, 66, 66);
+      --c-border: rgb(156, 156, 156);
       --c-content: rgb(255, 255, 255);
       background-color: var(--c-bg-1);
       font-family:
@@ -43,19 +46,24 @@
         "Helvetica Neue",
         sans-serif;
       color: var(--c-content);
+      border-color: var(--c-border);
     }
-    * {
-      box-sizing: border-box;
-      color: inherit;
+    :root * {
       border-width: thin;
       border-style: none;
       border-color: inherit;
     }
-
-    button {
+    .border{
+      border-style: solid;
+    }
+    :root * {
+      box-sizing: border-box;
+      color: inherit;
       padding: unset;
       font-family: inherit;
       font-size: inherit;
+    }
+    button {
       border-style: solid;
       background-color: var(--c-bg-2);
       &:hover {
