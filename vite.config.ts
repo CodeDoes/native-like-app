@@ -2,10 +2,13 @@ import { defineConfig } from 'vite'
 import path from 'node:path'
 import electron from 'vite-plugin-electron/simple'
 import { svelte } from "@sveltejs/vite-plugin-svelte"
+import { jsonX } from 'vite-plugin-jsonx';
 import UnoCSS from 'unocss/vite'
 // https://vitejs.dev/config/
 export default defineConfig({
+
   plugins: [
+    jsonX(),
     electron({
       main: {
         // Shortcut of `build.lib.entry`.

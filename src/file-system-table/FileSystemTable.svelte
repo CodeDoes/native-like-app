@@ -1,3 +1,6 @@
+<script lang="ts" module>
+  export type FileSystemTableColumn = { label: string; field: keyof any };
+</script>
 <script lang="ts">
 
 
@@ -6,8 +9,8 @@
     items,
   }: {
     items: any[];
-    group: keyof any;
-    columns: { label: string; field: keyof any }[];
+    columns: FileSystemTableColumn[];
+    
   } = $props();
   let widths: number[] = $state([]);
   let dragging: {action:"move"|"resize", index:number,offset:number} |null= $state(null)
@@ -49,14 +52,14 @@ function getWidth(index:number){
 <svelte:window />
 <svelte:document class="{dragging?"!cursor-grabbing":""}"/>
 <div>{dragging?.offset}&nbsp;</div>
-<div class="file-system-table" style="grid-template-columns: {columns.map((_,i)=>`minmax(4em,${getWidth(i)}px)`).join(' ')};">
-  <div class="header-bar">
+<div class="file-system-table" style="grid-template-columns: {columns.map((_,i)=>`minmax(${i==0?"5.5em":"4em"},${getWidth(i)}px)`).join(' ')};">
+  <div class="header row">
     {#each columns as column, i (column)}
       <button
-        bind:offsetWidth={widths[i]}
+        bind:clientWidth={widths[i]}
         style=" left: {getOffset(i)}px;"
         data-dragging={dragging?.index==i}
-        class="header-cell"
+        class="cell"
         title={column.label}
       >
         <div 
@@ -106,7 +109,6 @@ function getWidth(index:number){
             e.preventDefault()
             const mousemove:Window['onmousemove']=async (e) => {
                 widths[i] = Math.max(0,widths[i]+e.movementX) 
-                console.log(i,e.movementX)
             }
             const mouseup:Window['onmouseup'] = ()=>{
                 window.removeEventListener("mousemove",mousemove)
@@ -121,65 +123,67 @@ function getWidth(index:number){
     {/each}
   </div>
   {#each items as item}
-    <div class="content-row">
+    <div class="content row">
       {#each columns as column}
-        <div class="content-cell">
-          {item[column.field]}
+        <div class="cell">
+          <div class="label">{item[column.field]}</div>
         </div>
       {/each}
     </div>
   {/each}
 </div>
 <style lang='postcss'>
-  .content-row{
-    display: contents;
-  }
-  .content-cell{
-    width: 100%;
-    display: inline-block;
-    border-inline-end: thin solid transparent;
-  }
+  
   .file-system-table{
     user-select: none;
     display: grid;
     width: max-content;
 
   }
-  .header-bar{
+  .row{
     display: contents;
   }
-  .header-cell{
-    width: 100%;
-    min-width: 3em;
-    cursor: default;
-    appearance: none;
-    border: none;
-    position: relative;
-    transition: left 400ms 0ms;
-    
-    &[data-dragging=true]{
-      transition-duration: 0ms;
-      z-index: 50;
-      background-color: var(--c-bg-3);
+  .cell{
+    .header>&{
+      width: 100%;
+      min-width: 3em;
+      cursor: default;
+      text-align: start;
+      appearance: none;
+      border: none;
+      position: relative;
+      transition: left 200ms 0ms;
+      
+      &[data-dragging=true]{
+        transition-duration: 0ms;
+        z-index: 50;
+        background-color: var(--c-bg-3);
+      }
     }
   }
   .label{
-      display: inline-block;
-      width: 100%;
-      height: 100%;
-      position: relative;
-      [data-dragging=false]>&{
-        border-inline-end: thin solid;
-        border-color: inherit;
-      }
+    padding-inline-start: 0.5em;
+    :first-child>&{
+      padding-inline-start: 2em;
     }
-  .label,.content-cell{
-    
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    position: relative;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    [data-dragging=false]>&{
+      border-inline-end: thin solid;
+      border-color: inherit;
+    }
+    .content &{
+      width: 100%;
+      display: inline-block;
+      border-inline-end: thin solid transparent;
+    }
   }
-  .drag-area{
+  .header>.cell>.drag-area{
     position: absolute;
     float: inline-end;
     top: 0;
@@ -195,10 +199,9 @@ function getWidth(index:number){
     &:hover{
       cursor: col-resize;
     }
-    .header-cell[data-dragging=true]>&{
+    [data-dragging=true]>&{
       z-index: 50;
     }
-
   }
 
 </style>

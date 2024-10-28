@@ -1,45 +1,25 @@
 <script lang="ts">
-  import FileSystemTable from "./file-system-table/FileSystemTable.svelte";
-  const group = $state(0);
-  let columns = $state([
-    {
+  import FileSystemTable, {
+    type FileSystemTableColumn,
+  } from "./file-system-table/FileSystemTable.svelte";
+  import sample_data from "./sample-data.json";
+  let columns: FileSystemTableColumn[] = $state([]);
+  $effect(() => {
+    columns = Array.from(
+      sample_data.reduce(
+        (set, item) => set.union(new Set(Object.keys(item))),
+        new Set<string>([])
+      )
+    ).map<FileSystemTableColumn>((label) => ({
+      label: label,
       sort: "asc",
-      label: "Column 0",
-      field: 1,
-    },
-    {
-      sort: "asc",
-      label: "Column 1",
-      field: 2,
-    },
-    {
-      sort: "asc",
-      label: "Column 2",
-      field: 3,
-    },
-    {
-      sort: "asc",
-      label: "Column 3",
-      field: 4,
-    },
-    {
-      sort: "asc",
-      label: "Column 4",
-      field: 5,
-    },
-  ]);
-
-  const items = $state(
-    [...new Array(3)].flatMap((_, g) =>
-      [...new Array(5)].map((_, i) => [
-        g,
-        ...[...new Array(5)].map((_, j) => `${g} Cell ${i} ${j}`),
-      ])
-    )
-  );
+      field: label,
+    }));
+  });
+  const items: any[] = $derived(sample_data);
 </script>
 
-<FileSystemTable {group} bind:columns {items} />
+<FileSystemTable bind:columns {items} />
 
 <style lang="postcss">
   :global {

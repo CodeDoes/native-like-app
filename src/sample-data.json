@@ -1,0 +1,82 @@
+[
+    {
+        "album": "Nevermind",
+        "track_number": 1,
+        "filename": "01. Smells Like Teen Spirit.mp3",
+        "title": "Smells Like Teen Spirit",
+        "genre": "Grunge",
+        "artist": "Nirvana",
+        "release_year": 1991,
+        "duration": 288
+    },
+    {
+        "album": "Nevermind",
+        "track_number": 2,
+        "filename": "02. In Bloom.mp3",
+        "title": "In Bloom",
+        "genre": "Grunge",
+        "artist": "Nirvana",
+        "release_year": 1991,
+        "duration": 217
+    },
+    {
+        "album": "Dark Side of the Moon",
+        "track_number": 1,
+        "filename": "01. Speak to Me.mp3",
+        "title": "Speak to Me",
+        "genre": "Progressive Rock",
+        "artist": "Pink Floyd",
+        "release_year": 1973,
+        "duration": 90
+    },
+    {
+        "album": "Dark Side of the Moon",
+        "track_number": 2,
+        "filename": "02. Breathe.mp3",
+        "title": "Breathe",
+        "genre": "Progressive Rock",
+        "artist": "Pink Floyd",
+        "release_year": 1973,
+        "duration": 235
+    },
+    {
+        "album": "Led Zeppelin IV",
+        "track_number": 1,
+        "filename": "01. Black Dog.mp3",
+        "title": "Black Dog",
+        "genre": "Hard Rock",
+        "artist": "Led Zeppelin",
+        "release_year": 1971,
+        "duration": 297
+    },
+    {
+        "album": "Led Zeppelin IV",
+        "track_number": 2,
+        "filename": "02. Rock and Roll.mp3",
+        "title": "Rock and Roll",
+        "genre": "Hard Rock",
+        "artist": "Led Zeppelin",
+        "release_year": 1971,
+        "duration": 332
+    },
+    {
+        "album": "Thriller",
+        "track_number": 1,
+        "filename": "01. Wanna Be Startin' Somethin'.mp3",
+        "title": "Wanna Be Startin' Somethin'",
+        "genre": "Pop, Funk, R&B",
+        "artist": "Michael Jackson",
+        "release_year": 1982,
+        "duration": 259
+    },
+    {
+        "album": "Thriller",
+        "track_number": 2,
+        "filename": "02. Baby Be Mine.mp3",
+        "title": "Baby Be Mine",
+        "genre": "Pop, R&B",
+        "artist": "Michael Jackson",
+        "release_year": 1982,
+        "duration": 235
+    }
+]
